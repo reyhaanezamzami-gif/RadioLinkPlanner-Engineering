@@ -1,29 +1,32 @@
-# Architecture
+# Architecture — RadioLinkPlanner-Engineering
 
 ## 1. Overview
 
-**RadioLinkPlannervfV** is a radio link planning project focused on radio-frequency calculations, terrain processing, and shared engineering domain models.
+RadioLinkPlanner-Engineering is a selected public release of engineering components from the RadioLinkPlannervfV project.
 
-This repository contains a selected public source release of the project. It includes the following components:
+The repository focuses on three primary areas:
 
-- **Core** — Shared domain models and contracts
-- **RF** — Radio-frequency calculation implementations
-- **Terrain** — Terrain data processing and analysis
-- **Terrain.Tests** — Automated tests for the published engineering components
+- Domain models and shared contracts
+- Radio-frequency calculations
+- Terrain processing and analysis
 
-> **Repository scope:** This repository is not the complete RadioLinkPlannervfV application.
+The published code is organized into separate .NET 8 projects with explicit project references.
+
+This repository does not represent the complete architecture of the original application.
 
 ## 2. Technology Stack
 
-| Component | Technology |
+| Technology | Purpose |
 |---|---|
-| Framework | .NET 8 |
-| Language | C# |
-| Test framework | xUnit |
-| Test SDK | Microsoft.NET.Test.Sdk |
-| Code coverage | coverlet.collector |
+| C# | Primary programming language |
+| .NET 8 | Application framework |
+| xUnit | Automated testing |
+| Microsoft.NET.Test.Sdk | Test execution infrastructure |
+| coverlet.collector | Code coverage collection |
+| Nullable Reference Types | Compile-time nullability analysis |
+| Implicit Usings | Common namespace imports |
 
-The inspected project files target `net8.0` and enable nullable reference types and implicit usings.
+All published projects target `net8.0`.
 
 ## 3. Repository Structure
 
@@ -32,8 +35,11 @@ The published repository is organized into the following projects:
 ```text
 RadioLinkPlanner-Engineering/
 │
+├── README.md
+├── ARCHITECTURE.md
+├── .gitignore
+│
 ├── src/
-│   │
 │   ├── RadioLinkPlannervfV.Core/
 │   │   ├── Enums/
 │   │   ├── Interfaces/
@@ -71,41 +77,78 @@ The count includes C# source files under `src`, excluding test files and other f
 
 ## 4. Project Responsibilities
 
-### 4.1 Core
+### 4.1 RadioLinkPlannervfV.Core
 
-`RadioLinkPlannervfV.Core` contains shared domain abstractions and models.
+Core contains the shared domain models and abstractions used by the published engineering projects.
 
-Its responsibilities include:
+Its source structure includes:
 
-- Geographic coordinates and distance-related value objects
+| Directory | Responsibility |
+|---|---|
+| `Enums` | Domain enumeration types |
+| `Interfaces` | Contracts for calculations, terrain access, analysis, and persistence |
+| `Models` | Domain entities, requests, results, and configuration models |
+| `Services` | Shared domain-level services |
+| `ValueObjects` | Strongly typed domain values such as distance and frequency |
+
+Examples of published domain concepts include:
+
+- Geographic coordinates
 - Sites and radio links
-- Radio and propagation parameters
-- Terrain elevation and profile models
+- Radio parameters
+- Propagation settings
+- Terrain elevation
+- Terrain profiles
 - Link analysis results
 - Link budget models
-- Multi-site and network analysis models
-- Project and report repository contracts
+- Multi-site analysis
+- Network analysis
+- Project and report contracts
 
-Core has no project references in the published project file.
+**Dependency rule:**
 
-### 4.2 RF
+Core has no project references in its published project file.
 
-`RadioLinkPlannervfV.RF` contains radio-frequency calculation implementations.
+This keeps the published domain layer independent of the RF and Terrain implementation projects.
 
-The published source includes:
+### 4.2 RadioLinkPlannervfV.RF
 
-| Component | Responsibility |
+The RF project contains radio-frequency calculation implementations.
+
+Published source components include:
+
+- `FresnelCalculator`
+- `LinkBudgetCalculator`
+
+Its responsibility is to provide RF calculation functionality using the shared contracts and models defined in Core.
+
+**Project dependency:**
+
+```text
+RadioLinkPlannervfV.RF
+         |
+         v
+RadioLinkPlannervfV.Core
+```
+
+### 4.3 RadioLinkPlannervfV.Terrain
+
+The Terrain project contains terrain-related data processing and analysis components.
+
+Its published source is organized into:
+
+| Directory | Responsibility |
 |---|---|
-| `FresnelCalculator` | Fresnel zone calculations |
-| `LinkBudgetCalculator` | Radio link budget calculations |
+| `Calculators` | Geographic distance and interpolation calculations |
+| `Exceptions` | Terrain-related exception types |
+| `Generators` | Terrain profile generation |
+| `Models` | Terrain configuration and provider options |
+| `Optimizers` | Antenna height optimization |
+| `Providers` | Offline, online, and fallback elevation providers |
+| `Readers` | SRTM file and elevation data reading |
+| `Services` | Terrain-related engineering analysis services |
 
-RF references Core.
-
-### 4.3 Terrain
-
-`RadioLinkPlannervfV.Terrain` contains terrain-related processing and analysis components.
-
-Its published components include:
+Published implementations include:
 
 - Great-circle interpolation
 - Haversine distance calculation
@@ -121,36 +164,46 @@ Its published components include:
 - Multi-site evaluation
 - Antenna height optimization
 
-Terrain references Core.
+**Project dependency:**
 
-### 4.4 Terrain.Tests
+```text
+RadioLinkPlannervfV.Terrain
+            |
+            v
+RadioLinkPlannervfV.Core
+```
 
-`RadioLinkPlannervfV.Terrain.Tests` contains automated tests for the published engineering components.
+### 4.4 RadioLinkPlannervfV.Terrain.Tests
 
-The test project references:
+The published test project validates selected behavior across the Core, RF, and Terrain projects.
 
-- Core
-- RF
-- Terrain
+Its project references include:
 
-Its test coverage includes terrain providers, SRTM processing, terrain profiles, calculations, optimization, and multi-site evaluation.
+- RadioLinkPlannervfV.Core
+- RadioLinkPlannervfV.RF
+- RadioLinkPlannervfV.Terrain
+
+The test project uses xUnit.
+
+Its published tests cover calculation behavior, terrain providers, SRTM data processing, profile generation, multi-site evaluation, and integration or diagnostic scenarios.
 
 ## 5. Dependency Architecture
 
-The published project references establish the following dependency structure:
+The verified project-reference structure is:
 
 ```mermaid
-flowchart TD
-    Core[Core]
-    RF[RF]
-    Terrain[Terrain]
-    Tests[Terrain.Tests]
+flowchart BT
+    Core["RadioLinkPlannervfV.Core"]
+    RF["RadioLinkPlannervfV.RF"]
+    Terrain["RadioLinkPlannervfV.Terrain"]
+    Tests["RadioLinkPlannervfV.Terrain.Tests"]
 
-    Core --> RF
-    Core --> Terrain
+    RF -->|references| Core
+    Terrain -->|references| Core
 
-    RF --> Tests
-    Terrain --> Tests
+    Tests -->|references| Core
+    Tests -->|references| RF
+    Tests -->|references| Terrain
 ```
 
 ### Project Reference Matrix
@@ -164,18 +217,41 @@ flowchart TD
 
 ### Dependency Rules
 
-The published project structure establishes these boundaries:
+The verified project-reference structure establishes these rules:
 
-1. Core does not reference RF or Terrain.
-2. RF depends on Core.
-3. Terrain depends on Core.
-4. Terrain.Tests references the engineering projects it tests.
+1. Core does not reference other published projects.
+2. RF references Core.
+3. Terrain references Core.
+4. Terrain.Tests references Core, RF, and Terrain.
+5. No direct RF-to-Terrain project reference is declared in the published project files.
 
-These rules preserve a clear separation between shared domain abstractions and specialized implementations.
+These rules preserve a separation between shared domain abstractions, engineering implementations, and automated tests.
 
-## 6. Terrain Data Architecture
+## 6. Architectural Boundaries
 
-The Terrain project includes components for offline and online terrain elevation access.
+The published code separates shared domain contracts from engineering implementations.
+
+### Core Boundary
+
+Core defines shared models, interfaces, and value objects.
+
+It does not contain references to the published RF or Terrain projects.
+
+### Engineering Implementation Boundary
+
+RF and Terrain contain specialized engineering implementations.
+
+Both projects reference Core to use shared domain abstractions.
+
+### Testing Boundary
+
+Terrain.Tests references the published engineering projects to verify selected behavior.
+
+This structure provides separation between domain definitions, engineering implementations, and automated tests.
+
+## 7. Terrain Data Architecture
+
+The published Terrain project includes multiple elevation data access implementations.
 
 ### Published Providers
 
@@ -195,57 +271,72 @@ The Terrain project includes components for offline and online terrain elevation
 | `SrtmFileNameResolver` | SRTM tile filename resolution |
 | `SrtmTileMetadata` | Tile metadata |
 
-The presence of these components does not imply guaranteed dataset availability or coverage. Actual behavior depends on implementation and configuration.
+The repository also includes abstractions for terrain elevation access and batch terrain elevation operations in Core.
 
-## 7. Build and Test
+The presence of these components does not imply that all required DEM datasets are bundled with the repository.
 
-Run commands from the repository root.
+Actual terrain data availability depends on the runtime environment and configured data sources.
 
-### Restore dependencies
+## 8. Build and Test Boundaries
 
-```bash
-dotnet restore
+The public repository does not include the complete original solution.
+
+Build and test operations should therefore target the published test project.
+
+Run the following commands from the repository root.
+
+### Restore Dependencies
+
+```powershell
+dotnet restore tests/RadioLinkPlannervfV.Terrain.Tests/RadioLinkPlannervfV.Terrain.Tests.csproj
 ```
 
 ### Build
 
-```bash
+```powershell
 dotnet build tests/RadioLinkPlannervfV.Terrain.Tests/RadioLinkPlannervfV.Terrain.Tests.csproj --no-restore
 ```
 
-### Run tests
+### Run Tests
 
-```bash
-dotnet test tests/RadioLinkPlannervfV.Terrain.Tests/RadioLinkPlannervfV.Terrain.Tests.csproj --no-build
+```powershell
+dotnet test tests/RadioLinkPlannervfV.Terrain.Tests/RadioLinkPlannervfV.Terrain.Tests.csproj --no-restore
 ```
 
-These commands validate the published Terrain test project and its referenced engineering projects.
+A successful restore is required before using `--no-restore`.
 
-They do not validate the complete application.
+These commands validate the published Terrain test project and its referenced engineering projects. They do not validate the complete original application.
 
-## 8. Public Repository Scope
+## 9. Public Repository Limitations
 
-The published repository contains:
-
-- RadioLinkPlannervfV.Core
-- RadioLinkPlannervfV.RF
-- RadioLinkPlannervfV.Terrain
-- RadioLinkPlannervfV.Terrain.Tests
-
-The following components of the wider application are not included in this published source subset:
+The following components belong to the broader application but are not included in this public release:
 
 - Infrastructure
 - API
 - Web application
-- Guide
+- Application guide
+- Complete application solution
 - API.Tests
 - Infrastructure.Tests
+- Private company and customer datasets
+- Full deployment configuration
 
-Therefore, this repository does not represent the complete application architecture or its deployment configuration.
+Consequently, the dependency diagram in this document describes only the published projects.
 
-## 9. Design Considerations
+It should not be interpreted as a complete representation of the original application's architecture.
 
-Future development should preserve the existing project boundaries.
+## 10. Design Considerations
+
+The published project structure demonstrates several architectural principles:
+
+- Separation of shared domain abstractions from specialized implementations
+- Explicit project dependencies
+- Independent RF and Terrain implementation projects
+- Centralized domain contracts
+- Automated testing through a dedicated test project
+- Use of .NET 8 across the published projects
+
+Future development should preserve these boundaries.
 
 Recommended engineering practices:
 
@@ -260,7 +351,8 @@ Recommended engineering practices:
 
 ---
 
-**Project:** RadioLinkPlannervfV  
-**Repository:** RadioLinkPlanner-Engineering  
-**Target Framework:** .NET 8  
-**Document:** Architecture Overview
+**Repository:** [RadioLinkPlanner-Engineering](https://github.com/reyhaanezamzami-gif/RadioLinkPlanner-Engineering)
+
+**Framework:** .NET 8
+
+**Architecture Scope:** Published Engineering Components Only
