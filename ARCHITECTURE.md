@@ -189,21 +189,29 @@ Its published tests cover calculation behavior, terrain providers, SRTM data pro
 
 ## 5. Dependency Architecture
 
-The verified project-reference structure is:
+The following diagram represents the verified project-reference structure of the published repository.
 
-```mermaid
-flowchart BT
-    Core["RadioLinkPlannervfV.Core"]
-    RF["RadioLinkPlannervfV.RF"]
-    Terrain["RadioLinkPlannervfV.Terrain"]
-    Tests["RadioLinkPlannervfV.Terrain.Tests"]
+```text
+PROJECT DEPENDENCY DIAGRAM
+==========================
 
-    RF -->|references| Core
-    Terrain -->|references| Core
+RadioLinkPlannervfV.RF
+    |
+    +----------------------> RadioLinkPlannervfV.Core
 
-    Tests -->|references| Core
-    Tests -->|references| RF
-    Tests -->|references| Terrain
+
+RadioLinkPlannervfV.Terrain
+    |
+    +----------------------> RadioLinkPlannervfV.Core
+
+
+RadioLinkPlannervfV.Terrain.Tests
+    |
+    +----------------------> RadioLinkPlannervfV.Core
+    |
+    +----------------------> RadioLinkPlannervfV.RF
+    |
+    +----------------------> RadioLinkPlannervfV.Terrain
 ```
 
 ### Project Reference Matrix
