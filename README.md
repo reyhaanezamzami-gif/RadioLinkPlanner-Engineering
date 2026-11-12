@@ -1,36 +1,49 @@
-﻿# RadioLink Planner
+# RadioLink Planner — Engineering Components
 
-A radio link planning engineering project focused on terrain analysis and RF calculation components.
+A C#/.NET 8 engineering project focused on radio link planning, RF calculations, and terrain analysis.
 
-## Project Overview
+This repository presents a selected public portion of a larger radio link planning application. It is intended to demonstrate selected engineering models, calculation components, terrain-processing functionality, and automated tests.
 
-RadioLink Planner is designed to support engineering workflows for radio link planning.
+> **Scope notice:** This repository is not the complete application or the full original source code.
 
-This repository contains a selected public portion of the project, including core models, RF calculation components, terrain processing, and selected automated tests.
+## Engineering Scope
 
-**This is not the complete application or the full original source code.**
+The published source is organized into the following components:
 
-## Included Components
+| Component | Responsibility |
+|---|---|
+| Core | Domain models, interfaces, value objects, and shared abstractions |
+| RF | Radio-frequency calculation components |
+| Terrain | Terrain processing, elevation providers, and terrain-based analysis |
+| Tests | Automated tests for selected RF and terrain components |
 
 ### Core
-Contains domain models, interfaces, and shared business abstractions.
+
+Contains shared domain models, interfaces, and value objects used by the selected engineering components.
 
 ### RF
-Contains selected radio-frequency calculation components, including:
+
+Contains selected radio-frequency calculation implementations, including:
+
 - Fresnel zone calculations
 - Link budget calculations
 
 ### Terrain
-Contains selected terrain processing and analysis components, including:
+
+Contains selected terrain-processing and analysis implementations, including:
+
 - Terrain profile generation
-- Elevation data providers
 - SRTM DEM reading
+- Terrain elevation providers
 - Earth curvature calculations
 - Terrain-based link analysis
 - Antenna height optimization
 
 ### Tests
-Contains selected automated tests for terrain processing and RF-related calculations.
+
+Contains selected automated tests covering terrain processing, RF-related calculations, and integration or diagnostic scenarios.
+
+Some integration and diagnostic tests may require external elevation datasets, local DEM files, or network connectivity.
 
 ## Technology Stack
 
@@ -38,7 +51,7 @@ Contains selected automated tests for terrain processing and RF-related calculat
 - .NET 8
 - xUnit
 
-## Project Structure
+## Repository Structure
 
 ```text
 src/
@@ -50,31 +63,46 @@ tests/
 └── RadioLinkPlannervfV.Terrain.Tests/
 ```
 
-## Build
+## Getting Started
 
-Build the test project and its referenced projects:
+### Prerequisites
 
-```powershell
-dotnet build tests/RadioLinkPlannervfV.Terrain.Tests/RadioLinkPlannervfV.Terrain.Tests.csproj
-```
+- .NET 8 SDK
+- Network connectivity for restoring NuGet dependencies
 
-## Tests
-
-Run the available automated tests:
+### Restore Dependencies
 
 ```powershell
-dotnet test tests/RadioLinkPlannervfV.Terrain.Tests/RadioLinkPlannervfV.Terrain.Tests.csproj
+dotnet restore tests/RadioLinkPlannervfV.Terrain.Tests/RadioLinkPlannervfV.Terrain.Tests.csproj
 ```
 
-Some terrain integration and diagnostic scenarios may require external elevation data or network access.
+### Build
+
+```powershell
+dotnet build tests/RadioLinkPlannervfV.Terrain.Tests/RadioLinkPlannervfV.Terrain.Tests.csproj --no-restore
+```
+
+### Run Tests
+
+```powershell
+dotnet test tests/RadioLinkPlannervfV.Terrain.Tests/RadioLinkPlannervfV.Terrain.Tests.csproj --no-restore
+```
+
+**Note:** A successful dependency restore is required before using `--no-restore`. Tests requiring external terrain data or network services may need additional environment setup.
 
 ## Scope and Limitations
 
-This repository is a limited public presentation of the project.
+This repository contains a limited selection of engineering components for public technical presentation.
 
-It does not include the complete application, private company materials, proprietary datasets, or all internal implementation components.
+It does not include:
 
-The published source code is provided for inspection and portfolio presentation only.
+- The complete application
+- The full original source code
+- Private company materials
+- Proprietary terrain datasets
+- All internal implementation components
+
+The presence of selected source files does not imply that every application workflow can be built or executed independently from this repository.
 
 ## Copyright and Usage
 
@@ -85,3 +113,9 @@ No license is granted to copy, modify, distribute, sublicense, or use this sourc
 Public visibility does not constitute permission to reuse the code.
 
 For permission requests, contact the repository owner through GitHub.
+
+---
+
+**Repository:** RadioLinkPlanner-Engineering
+**Framework:** .NET 8
+**Language:** C#
